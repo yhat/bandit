@@ -1,6 +1,25 @@
 import job
 import requests
 
+
+class Job(object):
+    def __init__(self, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+        self.data = kwargs
+
+    def __repr__(self):
+        return "<Job {}/{}>".format(self.username, self.name)
+
+class JobResult(object):
+    def __init__(self, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+        self.data = kwargs
+    
+    def __repr__(self):
+        return "<JobResult {}/{}/{}>".format(self.name, self.n, self.status)
+
 class Bandit(object):
     def __init__(self, username, apikey, url):
         self.username = username
@@ -15,11 +34,13 @@ class Bandit(object):
 
     def get_jobs(self):
         r = requests.get(self.url + "/jobs", auth=(self.username, self.apikey))
-        return r.json()
+        jobs = r.json()['jobs']
+        return [Job(**j) for j in jobs]
 
     def get_job_results(self):
         r = requests.get(self.url + "/job-results", auth=(self.username, self.apikey))
-        return r.json()
+        jobs = r.json()['jobs']
+        return [JobResult(**j) for j in jobs]
 
 
 # bandit = Bandit("glamp", "26daad20-cc45-11e6-9f6a-0242ac110003", "http://54.201.192.120/")
