@@ -42,7 +42,6 @@ class Bandit(object):
         self.username = username
         self.apikey = apikey
         self.url = url
-        self.job = job
         self.metadata = Metadata()
 
     def run(self, jobname):

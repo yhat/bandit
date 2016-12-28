@@ -16,5 +16,11 @@ class TestBasic(unittest.TestCase):
         results = bandit.get_job_results()
         self.assertEqual(type(results), type([]))
 
+    def test_add_metadata(self):
+        bandit.metadata.one = 1
+        bandit.metadata.two = 2
+        bandit.metadata.three = 3
+        self.assertEqual(bandit.metadata, {"one": 1, "two": 2, "three": 3})
+
 if __name__=="__main__":
     unittest.main()

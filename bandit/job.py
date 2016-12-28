@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 
 class Map(dict):
     """
@@ -58,7 +59,7 @@ class Metadata(Map):
             raise Exception("data is not json serializable: %s" % str(e))
 
         if not os.path.exists('metadata/metadata.json'):
-            print(json.dumps(data, indent=2))
+            sys.stderr.write(json.dumps(data, indent=2) + '\n')
             return
 
         with open('metadata/metadata.json', 'wb') as f:
