@@ -27,6 +27,5 @@ setup(
     ),
     install_requires=[
     ],
-    long_description=open("README.md").read(),
     keywords=['yhat', 'bandit'],
 )
