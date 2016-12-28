@@ -1,5 +1,6 @@
 import job
 import requests
+import urlparse
 
 
 class Job(object):
@@ -16,7 +17,7 @@ class JobResult(object):
         for key, value in kwargs.items():
             setattr(self, key, value)
         self.data = kwargs
-    
+
     def __repr__(self):
         return "<JobResult {}/{}/{}>".format(self.name, self.n, self.status)
 
@@ -59,7 +60,8 @@ class Bandit(object):
         >>> bandit.run("my-first-job")
         OK
         """
-        r = requests.get(self.url + "/jobs/" + self.username + "/" + jobname + "/run", auth=(self.username, self.apikey))
+        url = urlparse.urljoin(self.url, '/'.join(['jobs', self.username, jobname, 'run']))
+        r = requests.get(url, auth=(self.username, self.apikey))
         return r.text
 
     def get_jobs(self):
@@ -71,7 +73,8 @@ class Bandit(object):
         >>> bandit = Bandit("glamp", "6b3dff08-6ad8-4334-b37b-ad6162a0d4cf", "http://localhost:4567/")
         >>> bandit.get_jobs()
         """
-        r = requests.get(self.url + "/jobs", auth=(self.username, self.apikey))
+        url = urlparse.urljoin(self.url, 'jobs')
+        r = requests.get(url, auth=(self.username, self.apikey))
         jobs = r.json()['jobs']
         return [Job(**j) for j in jobs]
 
@@ -84,7 +87,8 @@ class Bandit(object):
         >>> bandit = Bandit("glamp", "6b3dff08-6ad8-4334-b37b-ad6162a0d4cf", "http://localhost:4567/")
         >>> bandit.get_job_results()
         """
-        r = requests.get(self.url + "/job-results", auth=(self.username, self.apikey))
+        url = urlparse.urljoin(self.url, "job-results")
+        r = requests.get(url, auth=(self.username, self.apikey))
         jobs = r.json()['jobs']
         return [JobResult(**j) for j in jobs]
 
