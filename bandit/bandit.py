@@ -1,4 +1,4 @@
-import job
+from .job import Metadata
 import requests
 import urlparse
 
@@ -43,7 +43,7 @@ class Bandit(object):
         self.apikey = apikey
         self.url = url
         self.job = job
-        self.email = job.Email()
+        self.metadata = Metadata()
 
     def run(self, jobname):
         """

@@ -1,6 +1,77 @@
 import json
 import os
 
+class Map(dict):
+    """
+    Example:
+    m = Map({'first_name': 'Eduardo'}, last_name='Pool', age=24, sports=['Soccer'])
+    """
+    def __init__(self, *args, **kwargs):
+        super(Map, self).__init__(*args, **kwargs)
+        for arg in args:
+            if isinstance(arg, dict):
+                for k, v in arg.iteritems():
+                    self[k] = v
+
+        if kwargs:
+            for k, v in kwargs.iteritems():
+                self[k] = v
+
+    def __getattr__(self, attr):
+        return self.get(attr)
+
+    def __setattr__(self, key, value):
+        self.__setitem__(key, value)
+
+    def __setitem__(self, key, value):
+        super(Map, self).__setitem__(key, value)
+        self.__dict__.update({key: value})
+
+    def __delattr__(self, item):
+        self.__delitem__(item)
+
+    def __delitem__(self, key):
+        super(Map, self).__delitem__(key)
+        del self.__dict__[key]
+
+class Metadata(Map):
+    """
+    Metadata that can be stored for your job.
+    """
+    def __setitem__(self, key, value):
+        try:
+            json.dumps(key)
+            json.dumps(value)
+        except Exception as e:
+            raise Exception(e)
+        super(Metadata, self).__setitem__(key, value)
+        self._write_metadata(self)
+
+    def __delitem__(self, key):
+        super(Metadata, self).__delitem__(key)
+        self._write_metadata(self)
+
+    def _write_metadata(self, data):
+        try:
+            json.dumps(data)
+        except Exception as e:
+            raise Exception("data is not json serializable: %s" % str(e))
+
+        if not os.path.exists('metadata/metadata.json'):
+            print(json.dumps(data, indent=2))
+            return
+
+        with open('metadata/metadata.json', 'wb') as f:
+            json.dump(data, f)
+
+    def _get_metadata(self):
+        if not os.path.exists('metadata/metadata.json'):
+            return {}
+
+        with open('metadata/metadata.json', 'rb') as f:
+            return json.load(f)
+
+
 def metadata(json_blob):
     _write_metadata(json_blob)
 
@@ -23,26 +94,6 @@ def add_metadata_key(key, value):
     metadata = _get_metadata()
     metadata[key] = value
     _write_metadata(json.dumps(metadata))
-
-def _write_metadata(metdata_json):
-    try:
-        json_blob = json.loads(metdata_json)
-    except Exception as e:
-        raise Exception("json_blob is invalid json: %s" % str(e))
-
-    if not os.path.exists('metadata/metadata.json'):
-        print(json_blob)
-        return
-
-    with open('metadata/metadata.json', 'wb') as f:
-        json.dump(json_blob, f)
-
-def _get_metadata():
-    if not os.path.exists('metadata/metadata.json'):
-        return {}
-
-    with open('metadata/metadata.json', 'rb') as f:
-        return json.load(f)
 
 def set_status(status):
     if status not in ['failed', 'success']:
