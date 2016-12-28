@@ -15,7 +15,7 @@ with open(
 exec(version)
 
 setup(
-    name="bandit",
+    name="bandit-cli",
     version=__version__,
     author="Greg Lamp",
     author_email="greg@yhathq.com",
