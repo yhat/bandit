@@ -112,8 +112,6 @@ class Bandit(object):
         """
         data = dict(tag_name=tag_name, x=x, y=y)
         job_id = os.environ.get('BANDIT_JOB_ID')
-        print(os.environ)
-        print("JOB_ID: %s" % job_id)
         if not job_id:
             print(data)
             return { "status": "OK", "message": "DRY RUN" }
