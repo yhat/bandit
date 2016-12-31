@@ -115,7 +115,7 @@ class Bandit(object):
             print(dict(tag_name=tag_name, x=x, y=y))
             return { "status": "OK", "message": "DRY RUN" }
         url = urlparse.urljoin(self.url, '/'.join(['jobs', job_id, 'report']))
-        r = requests.get(url, auth=(self.username, self.apikey))
+        r = requests.put(url, auth=(self.username, self.apikey))
         return r.json()
 
 # bandit = Bandit("glamp", "26daad20-cc45-11e6-9f6a-0242ac110003", "http://54.201.192.120/")
