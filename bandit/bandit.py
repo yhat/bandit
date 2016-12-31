@@ -110,12 +110,13 @@ class Bandit(object):
         >>> bandit.report("thing", 2, 20)
         >>> bandit.report("thing", 3, 30)
         """
+        data = dict(tag_name=tag_name, x=x, y=y)
         job_id = os.environ.get('BANDIT_JOB_ID')
         if not job_id:
-            print(dict(tag_name=tag_name, x=x, y=y))
+            print(data)
             return { "status": "OK", "message": "DRY RUN" }
         url = urlparse.urljoin(self.url, '/'.join(['jobs', job_id, 'report']))
-        r = requests.put(url, auth=(self.username, self.apikey))
+        r = requests.put(url, json=data, auth=(self.username, self.apikey))
         return r.json()
 
 # bandit = Bandit("glamp", "26daad20-cc45-11e6-9f6a-0242ac110003", "http://54.201.192.120/")
