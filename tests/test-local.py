@@ -22,5 +22,9 @@ class TestBasic(unittest.TestCase):
         bandit.metadata.three = 3
         self.assertEqual(bandit.metadata, {"one": 1, "two": 2, "three": 3})
 
+    def test_report_stuff(self):
+        output = {'status': 'OK', 'message': 'DRY RUN'}
+        self.assertEqual(bandit.report("ze-tag", 1, 2), output)
+
 if __name__=="__main__":
     unittest.main()

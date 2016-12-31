@@ -1,6 +1,7 @@
 from .job import Metadata
 import requests
 import urlparse
+import os
 
 
 class Job(object):
