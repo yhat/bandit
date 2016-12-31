@@ -91,6 +91,31 @@ class Bandit(object):
         jobs = r.json()['jobs']
         return [JobResult(**j) for j in jobs]
 
+    def report(self, tag_name, x, y):
+        """
+        Parameters
+        ==========
+        tag_name: str
+            tag for the data point
+        x: int, float
+            x value for the data point
+        y: int, float
+            y value for the data point
+
+        Examples
+        ========
+        >>> bandit = Bandit("glamp", "6b3dff08-6ad8-4334-b37b-ad6162a0d4cf", "http://localhost:4567/")
+        >>> bandit.report("thing", 1, 10)
+        >>> bandit.report("thing", 2, 20)
+        >>> bandit.report("thing", 3, 30)
+        """
+        job_id = os.environ.get('BANDIT_JOB_ID')
+        if not job_id:
+            print(dict(tag_name=tag_name, x=x, y=y))
+            return { "status": "OK", "message": "DRY RUN" }
+        url = urlparse.urljoin(self.url, '/'.join(['jobs', job_id, 'report']))
+        r = requests.get(url, auth=(self.username, self.apikey))
+        return r.json()
 
 # bandit = Bandit("glamp", "26daad20-cc45-11e6-9f6a-0242ac110003", "http://54.201.192.120/")
 # bandit = Bandit("glamp", "fe69f312-cb65-11e6-9d5f-6c400889bca4", "http://localhost:4567")
