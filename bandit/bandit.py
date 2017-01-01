@@ -1,7 +1,6 @@
 from .job import Metadata
 import requests
 import urlparse
-import json
 import os
 
 
@@ -38,12 +37,21 @@ class Bandit(object):
 
     Examples
     ========
+    >>> bandit = Bandit() # this will grab username, apikey, and url from environment variables
     >>> bandit = Bandit("glamp", "6b3dff08-6ad8-4334-b37b-ad6162a0d4cf", "http://localhost:4567/")
     """
-    def __init__(self, username, apikey, url):
-        self.username = username
-        self.apikey = apikey
-        self.url = url
+    def __init__(self, username=None, apikey=None, url=None):
+        self.username = os.environ.get('BANDIT_CLIENT_USERNAME', username)
+        self.apikey = os.environ.get('BANDIT_CLIENT_APIKEY', apikey)
+        self.url = os.environ.get('BANDIT_CLIENT_URL', url)
+
+        if self.username is None:
+            raise Exception("`username` cannot be None. Please set via `BANDIT_CLIENT_USERNAME` environment variable or via Bandit() constructor.")
+        if self.apikey is None:
+            raise Exception("`apikey` cannot be None. Please set via `BANDIT_CLIENT_APKEY` environment variable or via Bandit() constructor.")
+        if self.url is None:
+            raise Exception("`url` cannot be None. Please set via `BANDIT_CLIENT_URL` environment variable or via Bandit() constructor.")
+
         self.metadata = Metadata()
 
     def run(self, jobname):
@@ -107,19 +115,16 @@ class Bandit(object):
         Examples
         ========
         >>> bandit = Bandit("glamp", "6b3dff08-6ad8-4334-b37b-ad6162a0d4cf", "http://localhost:4567/")
-        >>> bandit.report("thing-1", 1, 10)
-        >>> bandit.report("thing-2", 2, 20)
-        >>> bandit.report("thing-1", 3, 30)
-        >>> bandit.report("thing-2", 2.4, 25)
+        >>> bandit.report("thing", 1, 10)
+        >>> bandit.report("thing", 2, 20)
+        >>> bandit.report("thing", 3, 30)
         """
+
         data = dict(tag_name=tag_name, x=x, y=y)
         job_id = os.environ.get('BANDIT_JOB_ID')
         if not job_id:
             print(data)
             return { "status": "OK", "message": "DRY RUN" }
-
-        with open('metadata/charts.ndjson', 'ab') as f:
-            f.write(json.dumps(data) + '\n')
         url = urlparse.urljoin(self.url, '/'.join(['jobs', job_id, 'report']))
         r = requests.put(url, json=data, auth=(self.username, self.apikey))
         return r.json()
