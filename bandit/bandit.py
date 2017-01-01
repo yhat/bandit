@@ -121,10 +121,18 @@ class Bandit(object):
         """
 
         data = dict(tag_name=tag_name, x=x, y=y)
+
+        # this is detecting whether or not this is being run on a bandit worker.
+        # if we're not on a bandit worker, just do a "dry run"
         job_id = os.environ.get('BANDIT_JOB_ID')
         if not job_id:
             print(data)
             return { "status": "OK", "message": "DRY RUN" }
+
+        # write/append to the charts.ndjson file that will be inside the container
+        with open('metadata/charts.ndjson', 'ab') as f:
+            f.write(json.dumps(data) + '\n')
+
         url = urlparse.urljoin(self.url, '/'.join(['jobs', job_id, 'report']))
         r = requests.put(url, json=data, auth=(self.username, self.apikey))
         return r.json()
