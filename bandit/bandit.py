@@ -112,13 +112,13 @@ class Bandit(object):
         >>> bandit.report("thing-2", 2.4, 25)
         """
         data = dict(tag_name=tag_name, x=x, y=y)
-        with open('metadata/charts.ndjson', 'ab') as f:
-            f.write(json.dumps(data) + '\n')
-
         job_id = os.environ.get('BANDIT_JOB_ID')
         if not job_id:
             print(data)
             return { "status": "OK", "message": "DRY RUN" }
+
+        with open('metadata/charts.ndjson', 'ab') as f:
+            f.write(json.dumps(data) + '\n')
         url = urlparse.urljoin(self.url, '/'.join(['jobs', job_id, 'report']))
         r = requests.put(url, json=data, auth=(self.username, self.apikey))
         return r.json()
