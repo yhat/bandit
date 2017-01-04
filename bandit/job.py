@@ -73,33 +73,33 @@ class Metadata(Map):
             return json.load(f)
 
 
-def metadata(json_blob):
-    _write_metadata(json_blob)
-
-def add_metadata_key(key, value):
-    """
-    Add key value pair to your metdata.
-
-    Parameters
-    ==========
-    key: str
-        name of the value you'd like to save
-    value: object
-        value of what you'd like to save
-
-    Examples
-    ========
-    >>> add_metadata_key("r2", 0.82)
-    >>> add_metadata_key("foo", "bar")
-    """
-    metadata = _get_metadata()
-    metadata[key] = value
-    _write_metadata(json.dumps(metadata))
-
-def set_status(status):
-    if status not in ['failed', 'success']:
-        raise Exception("Invalid status: %" % status)
-    os.environ['BANDIT_JOB_STATUS'] = status
+# def metadata(json_blob):
+#     _write_metadata(json_blob)
+#
+# def add_metadata_key(key, value):
+#     """
+#     Add key value pair to your metdata.
+#
+#     Parameters
+#     ==========
+#     key: str
+#         name of the value you'd like to save
+#     value: object
+#         value of what you'd like to save
+#
+#     Examples
+#     ========
+#     >>> add_metadata_key("r2", 0.82)
+#     >>> add_metadata_key("foo", "bar")
+#     """
+#     metadata = _get_metadata()
+#     metadata[key] = value
+#     _write_metadata(json.dumps(metadata))
+#
+# def set_status(status):
+#     if status not in ['failed', 'success']:
+#         raise Exception("Invalid status: %" % status)
+#     os.environ['BANDIT_JOB_STATUS'] = status
 
 _DEFAULT_BODY = """Your job has completed. This is the default message. You can
 customize this message by calling the `bandit.job.body(html or string)`
@@ -110,10 +110,10 @@ class Email(object):
     """
     Use the Email objects to programatically send e-mail alerts with Bandit.
     """
-    def __init__(self, subject="", body="", attachments=[], write_json=True):
+    def __init__(self, subject="", body="", write_json=True):
         self._subject = subject if subject else "Bandit Job"
         self._body = body if body else _DEFAULT_BODY
-        self._attachments = attachments
+        self._attachments = [] # attachments
         self.write_json = write_json
 
     def _to_dict(self):
@@ -132,13 +132,14 @@ class Email(object):
         if self.write_json==False:
             return
 
-        with open('email.json', 'wb') as f:
-            json.dump(self._to_dict(), f)
+        with open('metadata/email.json', 'wb') as f:
+            json.dump(self._to_dict(), f, indent=2)
 
     def __str__(self):
         """
         Default stringified message looks like this:
 
+        ======================================================================
         > Bandit Job
         Your job has completed. This is the default message. You can customize
         this message by calling the `bandit.job.body(html or string)` function
@@ -146,12 +147,13 @@ class Email(object):
 
         Cheers!
         ~Team Bandit
+        ======================================================================
         """
         msg = [
-            "="*80,
+            "="*70,
             "> %s" % self._subject,
             self._body,
-            "="*80,
+            "="*70,
         ]
         return "\n".join(msg)
 
