@@ -110,7 +110,13 @@ class Email(object):
     """
     Use the Email objects to programatically send e-mail alerts with Bandit.
     """
-    def __init__(self, subject="", body="", write_json=True):
+    def __init__(self, recipients, subject="", body="", write_json=True):
+        if isinstance(recipients, str):
+            recipients = [recipients]
+        elif not isinstance(recipients, list):
+            raise Exception("recipients must be a list or string")
+
+        self._recipients = recipients
         self._subject = subject if subject else "Bandit Job"
         self._body = body if body else _DEFAULT_BODY
         self._attachments = [] # attachments
@@ -119,6 +125,7 @@ class Email(object):
     def _to_dict(self):
         "private method for dictifying an Email"
         return {
+            "reci": self._recipients,
             "subject": self._subject,
             "body": self._body,
             "attachments": self._attachments
@@ -139,6 +146,9 @@ class Email(object):
         """
         Default stringified message looks like this:
 
+
+        ======================================================================
+        joe.smith@test.com, bob.smith@test.com
         ======================================================================
         > Bandit Job
         Your job has completed. This is the default message. You can customize
@@ -150,6 +160,8 @@ class Email(object):
         ======================================================================
         """
         msg = [
+            "="*70,
+            ", ".join(self._recipients),
             "="*70,
             "> %s" % self._subject,
             self._body,
