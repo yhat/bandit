@@ -121,6 +121,7 @@ class Email(object):
         self._body = body if body else _DEFAULT_BODY
         self._attachments = [] # attachments
         self.write_json = write_json
+        self._write()
 
     def _to_dict(self):
         "private method for dictifying an Email"
