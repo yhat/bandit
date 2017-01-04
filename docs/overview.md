@@ -51,6 +51,7 @@ result = sm.ols(formula="A ~ B + C", data=df).fit()
 bandit.metadata.R2 = result.rsquared
 bandit.metadata.AIC = result.aic
 ```
+
 ## Reports
 
 Stream data from jobs back to the Bandit UI
@@ -73,3 +74,9 @@ for x in range(10):
 ```
 
 ## Customizing Emails
+
+```python
+bandit.email.subject()
+bandit.email.body()
+bandit.email.attachment()
+```
