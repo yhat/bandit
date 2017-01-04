@@ -5,8 +5,8 @@ bandit = Bandit("glamp", "fe69f312-cb65-11e6-9d5f-6c400889bca4", "http://localho
 
 class TestBasic(unittest.TestCase):
 
-    def test_can_run_job(self):
-        self.assertEqual(bandit.run('ncaa-scraper'), "OK")
+    # def test_can_run_job(self):
+    #    self.assertEqual(bandit.run('ncaa-scraper'), "OK")
 
     def test_can_get_jobs(self):
         jobs = bandit.get_jobs()
