@@ -3,4 +3,4 @@
 ```bash
 $ pip install -U bandit-cli
 ```
-![Documentation](./docs/overview.md)
+[Documentation](./docs/overview.md)
