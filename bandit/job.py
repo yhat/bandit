@@ -125,7 +125,7 @@ class Email(object):
     def _to_dict(self):
         "private method for dictifying an Email"
         return {
-            "reci": self._recipients,
+            "recipients": self._recipients,
             "subject": self._subject,
             "body": self._body,
             "attachments": self._attachments
