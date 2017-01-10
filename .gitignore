@@ -2,6 +2,7 @@
 venv
 # C extensions
 *.so
+Gemfile.lock
 
 # Packages
 *.egg

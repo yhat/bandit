@@ -1,1 +1,9 @@
 theme: jekyll-theme-cayman
+exclude: [bandit, tests]
+defaults:
+  -
+    scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "default.html"

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Getting Started</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#157878">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/assets/css/style.css?v=ed17c28d42757a57ff8bd32af71867b2712804b3">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">bandit</h1>
+      <h2 class="project-tagline"></h2>
+      
+        <a href="http://github.com/yhat/bandit" class="btn">View on GitHub</a>
+      
+      
+    </section>
+
+    <section class="main-content">
+      <h3 id="getting-started">Getting Started</h3>
+
+<h3 id="installation">Installation</h3>
+
+<p><code class="highlighter-rouge">pip install -U bandit-cli</code></p>
+
+<h2 id="setup-the-auth">Setup the Auth</h2>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">bandit</span> <span class="o">=</span> <span class="n">Bandit</span><span class="p">(</span><span class="s">'&lt;USERNAME&gt;'</span><span class="p">,</span> <span class="s">'&lt;API_KEY&gt;'</span><span class="p">,</span><span class="s">'&lt;BANDIT_URL&gt;'</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<h2 id="tracking-data">Tracking Data</h2>
+
+<p>When jobs are run, Bandit will automatically track:</p>
+
+<ul>
+  <li>Input files</li>
+  <li>Output files</li>
+  <li>Metadata (<em>optional</em>)</li>
+</ul>
+
+<p>These can be any sort of file (png, jpeg, xlsx, etc).</p>
+
+<h2 id="metadata">Metadata</h2>
+
+<p><code class="highlighter-rouge">bandit.metadata</code> <em>type</em> dict</p>
+
+<p><strong>Usage:</strong></p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">bandit</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">AUC</span> <span class="o">=</span> <span class="o">.</span><span class="mi">68</span>
+<span class="n">bandit</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s">'AIC'</span><span class="p">]</span> <span class="o">=</span> <span class="o">.</span><span class="mi">88</span>
+</code></pre>
+</div>
+
+<p>The Bandit CLI can be used to track metrics across different job runs.  For example
+if we configure a job to train a regression model once a week, we can track the R²
+and AIC values each time the job runs.</p>
+
+<p><strong>Example:</strong></p>
+
+<p>Below we train a simple linear regression and track <code class="highlighter-rouge">R2</code> and <code class="highlighter-rouge">AIC</code></p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">bandit</span> <span class="kn">import</span> <span class="n">Bandit</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">statsmodels.formula.api</span> <span class="kn">as</span> <span class="nn">sm</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+  <span class="s">"A"</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">50</span><span class="p">],</span>
+  <span class="s">"B"</span><span class="p">:</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">],</span>
+  <span class="s">"C"</span><span class="p">:</span> <span class="p">[</span><span class="mi">32</span><span class="p">,</span> <span class="mi">234</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">42523</span><span class="p">]</span>
+<span class="p">})</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="n">formula</span><span class="o">=</span><span class="s">"A ~ B + C"</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+<span class="c"># track our two values</span>
+<span class="n">bandit</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">R2</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">rsquared</span>
+<span class="n">bandit</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">AIC</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">aic</span>
+</code></pre>
+</div>
+
+<h2 id="reports">Reports</h2>
+
+<p>Stream data from jobs back to the Bandit UI</p>
+
+<p><code class="highlighter-rouge">bandit.report(tag_name, x, y)</code></p>
+
+<p><strong>Parameters:</strong>
+- <code class="highlighter-rouge">tag_name</code> <em>(str)</em>: the name of value to be tracked
+- <code class="highlighter-rouge">x</code> <em>(int, float)</em>: the x value
+- <code class="highlighter-rouge">y</code> <em>(int, float)</em>: the y value</p>
+
+<p><strong>Example:</strong></p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="p">[</span><span class="s">"a"</span><span class="p">,</span> <span class="s">"b"</span><span class="p">,</span> <span class="s">"c"</span><span class="p">,</span> <span class="s">"d"</span><span class="p">,</span> <span class="s">"e"</span><span class="p">,</span> <span class="s">"f"</span><span class="p">,</span> <span class="s">"g"</span><span class="p">]:</span>
+            <span class="n">bandit</span><span class="o">.</span><span class="n">report</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">())</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<h2 id="customizing-emails">Customizing Emails</h2>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">bandit</span><span class="o">.</span><span class="n">email</span><span class="o">.</span><span class="n">subject</span><span class="p">()</span>
+<span class="n">bandit</span><span class="o">.</span><span class="n">email</span><span class="o">.</span><span class="n">body</span><span class="p">()</span>
+<span class="n">bandit</span><span class="o">.</span><span class="n">email</span><span class="o">.</span><span class="n">attachment</span><span class="p">()</span>
+</code></pre>
+</div>
+
+
+      <footer class="site-footer">
+        
+          <span class="site-footer-owner"><a href="http://github.com/yhat/bandit">bandit</a> is maintained by <a href="http://github.com/yhat">yhat</a>.</span>
+        
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a>.</span>
+      </footer>
+    </section>
+
+    
+  </body>
+</html>
