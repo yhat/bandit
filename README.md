@@ -4,8 +4,8 @@
 $ pip install -U bandit-cli
 ```
 
-[Documentation](./docs/overview)
+[Documentation](./overview)
 
-- [Metadata](./docs/overview#metadata)
-- [Reports](./docs/overview#reports)
-- [Customizing Emails](./docs/overview#customizing-emails)
+- [Metadata](./overview#metadata)
+- [Reports](./overview#reports)
+- [Customizing Emails](./overview#customizing-emails)
