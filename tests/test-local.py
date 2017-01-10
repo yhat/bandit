@@ -1,12 +1,27 @@
 import unittest
 from bandit import Bandit
 
-bandit = Bandit("glamp", "fe69f312-cb65-11e6-9d5f-6c400889bca4", "http://localhost:4567/")
+bandit = Bandit("glamp", "9c9fc856-d398-11e6-b0dd-6c400889bca4", "http://localhost:4567/")
 
 class TestBasic(unittest.TestCase):
 
-    # def test_can_run_job(self):
-    #    self.assertEqual(bandit.run('ncaa-scraper'), "OK")
+    def test_can_run_job(self):
+        response = bandit.run('bandit-demos', 'echo1')
+        self.assertEqual(response['status'], "OK")
+
+    def tests_run_and_wait(self):
+        results = bandit.run_and_wait('bandit-demos', 'echo1')
+        for result in results:
+            self.assertEqual(result.status, 'success')
+
+    def tests_run_chain(self):
+        jobs = [
+            {'project': 'bandit-demos', 'name': 'echo1'},
+            {'project': 'bandit-demos', 'name': 'echo1'},
+            {'project': 'bandit-demos', 'name': 'echo1'}
+        ]
+        result = bandit.run_series(jobs)
+        self.assertEqual(result['status'], 'success')
 
     def test_can_get_jobs(self):
         jobs = bandit.get_jobs()

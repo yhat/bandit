@@ -2,6 +2,7 @@ from .job import Metadata, Email
 import requests
 import urlparse
 import json
+import time
 import os
 
 
@@ -55,24 +56,56 @@ class Bandit(object):
 
         self.metadata = Metadata()
 
-    def run(self, jobname):
+    def run(self, project, jobname):
         """
         Run a job that's on Bandit
 
         Parameters
         ==========
+        project: str
+            the name of the project the job belongs to
         name: str
             the name of the job you'd like to run
 
         Examples
         ========
         >>> bandit = Bandit("glamp", "6b3dff08-6ad8-4334-b37b-ad6162a0d4cf", "http://localhost:4567/")
-        >>> bandit.run("my-first-job")
+        >>> bandit.run("myproject", "my-first-job")
         OK
         """
-        url = urlparse.urljoin(self.url, '/'.join(['jobs', self.username, jobname, 'run']))
+        url = urlparse.urljoin(self.url, '/'.join(['projects', self.username, project, 'jobs', jobname]))
         r = requests.get(url, auth=(self.username, self.apikey))
-        return r.text
+        return r.json()
+
+    def run_and_wait(self, project, jobname, timeout=60*5):
+        """
+        ...
+        """
+        run = self.run(project, jobname)
+        resultId = run['resultId']
+
+        start_time = time.time()
+
+        while (time.time() - timeout) <= start_time:
+            for result in self.get_job_results():
+                if result._id==resultId:
+                    if result.status in ['failed', 'success']:
+                        return result
+            time.sleep(2)
+
+        raise Exception("Job timed out")
+
+    def run_series(self, jobs, timeout=60*5):
+        """
+        ...
+        """
+        results = []
+        for job in jobs:
+            project = job['project']
+            name = job['name']
+            timeout = job.get('timeout', timeout)
+            results.append(self.run_and_wait(project, name, timeout=timeout))
+        return results
 
     def get_jobs(self):
         """
@@ -84,7 +117,7 @@ class Bandit(object):
         >>> bandit.get_jobs()
         """
         url = urlparse.urljoin(self.url, 'jobs')
-        r = requests.get(url, auth=(self.username, self.apikey))
+        r = requests.get(url, params={'format': 'json'}, auth=(self.username, self.apikey))
         jobs = r.json()['jobs']
         return [Job(**j) for j in jobs]
 
@@ -98,9 +131,9 @@ class Bandit(object):
         >>> bandit.get_job_results()
         """
         url = urlparse.urljoin(self.url, "job-results")
-        r = requests.get(url, auth=(self.username, self.apikey))
-        jobs = r.json()['jobs']
-        return [JobResult(**j) for j in jobs]
+        r = requests.get(url, params={'format': 'json'}, auth=(self.username, self.apikey))
+        job_results = r.json()['jobResults']
+        return [JobResult(**j) for j in job_results]
 
     def report(self, tag_name, x, y):
         """
