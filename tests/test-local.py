@@ -10,18 +10,19 @@ class TestBasic(unittest.TestCase):
         self.assertEqual(response['status'], "OK")
 
     def tests_run_and_wait(self):
-        results = bandit.run_and_wait('bandit-demos', 'echo1')
-        for result in results:
-            self.assertEqual(result.status, 'success')
+        result = bandit.run_and_wait('bandit-demos', 'echo1')
+        self.assertEqual(result.status, 'success')
 
     def tests_run_chain(self):
         jobs = [
             {'project': 'bandit-demos', 'name': 'echo1'},
             {'project': 'bandit-demos', 'name': 'echo1'},
-            {'project': 'bandit-demos', 'name': 'echo1'}
         ]
-        result = bandit.run_series(jobs)
-        self.assertEqual(result['status'], 'success')
+        results = bandit.run_series(jobs)
+        self.assertEqual(len(results), len(jobs))
+        for result in results:
+            self.assertEqual(result.status, 'success')
+
 
     def test_can_get_jobs(self):
         jobs = bandit.get_jobs()
