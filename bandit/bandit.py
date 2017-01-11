@@ -1,4 +1,4 @@
-from .job import Metadata, Email
+from .job import Metadata
 import requests
 import urlparse
 import json
@@ -55,7 +55,6 @@ class Bandit(object):
             raise Exception("`url` cannot be None. Please set via `BANDIT_CLIENT_URL` environment variable or via Bandit() constructor.")
 
         self.metadata = Metadata()
-        self.email = Email()
 
     def run(self, project, jobname):
         """
