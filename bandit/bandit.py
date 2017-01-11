@@ -160,7 +160,7 @@ class Bandit(object):
         # if we're not on a bandit worker, just do a "dry run"
         job_id = os.environ.get('BANDIT_JOB_ID')
         if not job_id:
-            print(data)
+            print(json.dumps(data, indent=2))
             return { "status": "OK", "message": "DRY RUN" }
 
         # write/append to the charts.ndjson file that will be inside the container

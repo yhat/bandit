@@ -23,7 +23,6 @@ class TestBasic(unittest.TestCase):
         for result in results:
             self.assertEqual(result.status, 'success')
 
-
     def test_can_get_jobs(self):
         jobs = bandit.get_jobs()
         self.assertEqual(type(jobs), type([]))
