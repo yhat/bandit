@@ -154,7 +154,7 @@ class Bandit(object):
         >>> bandit.report("thing", 3, 30)
         """
 
-        data = dict(tag_name=tag_name, x=x, y=y)
+        data = dict(tag_name=tag_name.replace(' ', '-'), x=x, y=y)
 
         # this is detecting whether or not this is being run on a bandit worker.
         # if we're not on a bandit worker, just do a "dry run"
