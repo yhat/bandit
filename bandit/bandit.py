@@ -135,7 +135,7 @@ class Bandit(object):
         job_results = r.json()['jobResults']
         return [JobResult(**j) for j in job_results]
 
-    def report(self, tag_name, x, y):
+    def report(self, tag_name, y):
         """
         Parameters
         ==========
@@ -149,12 +149,12 @@ class Bandit(object):
         Examples
         ========
         >>> bandit = Bandit("glamp", "6b3dff08-6ad8-4334-b37b-ad6162a0d4cf", "http://localhost:4567/")
-        >>> bandit.report("thing", 1, 10)
-        >>> bandit.report("thing", 2, 20)
-        >>> bandit.report("thing", 3, 30)
+        >>> bandit.report("thing", 10)
+        >>> bandit.report("thing", 20)
+        >>> bandit.report("thing", 30)
         """
 
-        data = dict(tag_name=tag_name.replace(' ', '-'), x=x, y=y)
+        data = dict(tag_name=tag_name.replace(' ', '-'), x=0, y=y)
 
         # this is detecting whether or not this is being run on a bandit worker.
         # if we're not on a bandit worker, just do a "dry run"
