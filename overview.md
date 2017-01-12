@@ -61,11 +61,10 @@ bandit.metadata.AIC = result.aic
 
 Stream data from jobs back to the Bandit UI
 
-`bandit.report(tag_name, x, y)`
+`bandit.report(tag_name, y)`
 
 __Parameters:__
 - `tag_name` _(str)_: the name of value to be tracked
-- `x` _(int, float)_: the x value
 - `y` _(int, float)_: the y value
 
 __Example:__
@@ -74,7 +73,7 @@ __Example:__
 for x in range(10):
     for y in range(10):
         for tag in ["a", "b", "c", "d", "e", "f", "g"]:
-            bandit.report(tag, y, np.random.rand())
+            bandit.report(tag, np.random.rand())
         time.sleep(0.1)
 ```
 
