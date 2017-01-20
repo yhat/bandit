@@ -6,8 +6,17 @@
 
 ## Setup the Auth
 
+If you're running jobs on the Bandit server, you don't need to specify your
+`USERNAME`, `APIKEY` or the `BANDIT_URL`, as they are environment variables.
+
+However, for testing scripts locally, you'll need to include them:
+
+
 ```python
-bandit = Bandit('<USERNAME>', '<API_KEY>','<BANDIT_URL>')
+# Read the environment variables in from the shell:
+bandit = Bandit(os.environ.get('BANDIT_CLIENT_USERNAME'), \
+                os.environ.get('BANDIT_CLIENT_APIKEY'), \
+                os.environ.get('BANDIT_CLIENT_URL'))
 ```
 
 ## Tracking Data
@@ -79,8 +88,13 @@ for x in range(10):
 
 ## Customizing Emails
 
+Send emails with a custom subject, body and attachments.
+
 ```python
-bandit.email.subject()
-bandit.email.body()
-bandit.email.attachment()
+# specify the body of the email
+body = 'This is an email body'
+
+email = job.Email(["colin@yhathq.com"])
+email.subject("Email from Bandit")
+email.body(body)
 ```
