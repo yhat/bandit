@@ -58,18 +58,18 @@ class Metadata(Map):
         except Exception as e:
             raise Exception("data is not json serializable: %s" % str(e))
 
-        if not os.path.exists('metadata/metadata.json'):
+        if not os.path.exists('/job/metadata/metadata.json'):
             sys.stderr.write(json.dumps(data, indent=2) + '\n')
             return
 
-        with open('metadata/metadata.json', 'wb') as f:
+        with open('/job/metadata/metadata.json', 'wb') as f:
             json.dump(data, f)
 
     def _get_metadata(self):
-        if not os.path.exists('metadata/metadata.json'):
+        if not os.path.exists('/job/metadata/metadata.json'):
             return {}
 
-        with open('metadata/metadata.json', 'rb') as f:
+        with open('/job/metadata/metadata.json', 'rb') as f:
             return json.load(f)
 
 
@@ -140,7 +140,7 @@ class Email(object):
         if self.write_json==False:
             return
 
-        with open('metadata/email.json', 'wb') as f:
+        with open('/job/metadata/email.json', 'wb') as f:
             json.dump(self._to_dict(), f, indent=2)
 
     def __str__(self):
