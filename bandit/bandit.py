@@ -73,7 +73,7 @@ class Bandit(object):
         >>> bandit.run("myproject", "my-first-job")
         OK
         """
-        url = urlparse.urljoin(self.url, '/'.join(['projects', self.username, project, 'jobs', jobname]))
+        url = urlparse.urljoin(self.url, '/'.join(['api', 'projects', self.username, project, 'jobs', jobname]))
         r = requests.get(url, auth=(self.username, self.apikey))
         return r.json()
 
@@ -116,7 +116,7 @@ class Bandit(object):
         >>> bandit = Bandit("glamp", "6b3dff08-6ad8-4334-b37b-ad6162a0d4cf", "http://localhost:4567/")
         >>> bandit.get_jobs()
         """
-        url = urlparse.urljoin(self.url, 'jobs')
+        url = urlparse.urljoin(self.url, '/api/jobs')
         r = requests.get(url, params={'format': 'json'}, auth=(self.username, self.apikey))
         jobs = r.json()['jobs']
         return [Job(**j) for j in jobs]
@@ -130,7 +130,7 @@ class Bandit(object):
         >>> bandit = Bandit("glamp", "6b3dff08-6ad8-4334-b37b-ad6162a0d4cf", "http://localhost:4567/")
         >>> bandit.get_job_results()
         """
-        url = urlparse.urljoin(self.url, "job-results")
+        url = urlparse.urljoin(self.url, "/api/job-results")
         r = requests.get(url, params={'format': 'json'}, auth=(self.username, self.apikey))
         job_results = r.json()['jobResults']
         return [JobResult(**j) for j in job_results]
@@ -167,6 +167,6 @@ class Bandit(object):
         with open('/job/metadata/charts.ndjson', 'ab') as f:
             f.write(json.dumps(data) + '\n')
 
-        url = urlparse.urljoin(self.url, '/'.join(['jobs', job_id, 'report']))
+        url = urlparse.urljoin(self.url, '/'.join(['api', 'jobs', job_id, 'report']))
         r = requests.put(url, json=data, auth=(self.username, self.apikey))
         return r.json()
