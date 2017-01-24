@@ -164,7 +164,7 @@ class Bandit(object):
             return { "status": "OK", "message": "DRY RUN" }
 
         # write/append to the charts.ndjson file that will be inside the container
-        with open('metadata/charts.ndjson', 'ab') as f:
+        with open('/job/metadata/charts.ndjson', 'ab') as f:
             f.write(json.dumps(data) + '\n')
 
         url = urlparse.urljoin(self.url, '/'.join(['jobs', job_id, 'report']))
