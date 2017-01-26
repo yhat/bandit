@@ -1,4 +1,5 @@
 from .job import Metadata
+from .yhat_json import json_dumps 
 import requests
 import urlparse
 import json
@@ -160,12 +161,12 @@ class Bandit(object):
         # if we're not on a bandit worker, just do a "dry run"
         job_id = os.environ.get('BANDIT_JOB_ID')
         if not job_id:
-            print(json.dumps(data, indent=2))
+            print(json_dumps(data))
             return { "status": "OK", "message": "DRY RUN" }
 
         # write/append to the charts.ndjson file that will be inside the container
         with open('/job/metadata/charts.ndjson', 'ab') as f:
-            f.write(json.dumps(data) + '\n')
+            f.write(json_dumps(data) + '\n')
 
         url = urlparse.urljoin(self.url, '/'.join(['api', 'jobs', job_id, 'report']))
         r = requests.put(url, json=data, auth=(self.username, self.apikey))
