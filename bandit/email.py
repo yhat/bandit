@@ -37,7 +37,7 @@ class Email(object):
         the bandit job runner and converted into a *real* email.
         """
         if self.write_json==False:
-            return
+            return self._to_dict()
 
         data = json_dumps(self._to_dict())
         with open('/job/metadata/email.json', 'wb') as f:
