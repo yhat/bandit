@@ -156,6 +156,7 @@ class Bandit(object):
         """
 
         data = dict(tag_name=tag_name.replace(' ', '-'), x=0, y=y)
+        data = json.loads(json_dumps(data))
 
         # this is detecting whether or not this is being run on a bandit worker.
         # if we're not on a bandit worker, just do a "dry run"
