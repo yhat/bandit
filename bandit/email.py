@@ -28,6 +28,7 @@ class Email(object):
             "recipients": self._recipients,
             "subject": self._subject,
             "body": self._body,
+            "attachments": self._attachments,
             "isHTML": True
         }
 
@@ -93,7 +94,24 @@ class Email(object):
         """
         self._body = html_or_string
         self._write()
-    
+
+    def add_attachment(self, filepath):
+        """
+        Add an attachment to your email
+
+        Parameters
+        ==========
+        filepath: str
+            path to the file you'd like to attach
+        """
+        with open(filepath, 'rb') as f:
+            attachment = {
+                "filename": os.path.basename(filepath),
+                "content": f.read()
+            }
+            self._attachments.append(attachment)
+            self._write()
+        
     def send(self, to):
         """
         Send an email to someone(s)
