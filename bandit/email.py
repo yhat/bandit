@@ -68,6 +68,7 @@ class Email(object):
             "> %s" % self._subject,
             self._body,
             "="*70,
+            "\n".join(["  - " + attachment['filename'] for attachment in self._attachments])
         ]
         return "\n".join(msg)
 
