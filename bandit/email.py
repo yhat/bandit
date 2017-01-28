@@ -106,9 +106,14 @@ class Email(object):
             path to the file you'd like to attach
         """
         with open(filepath, 'rb') as f:
+            content = f.read()
+            n_bytes = sys.getsizeof(content)
+            if n_bytes > 1000000:
+                sys.stderr.write("Attachment is too large! %s is %d bytes\n" % (filepath, n_bytes))
+                return
             attachment = {
                 "filename": os.path.basename(filepath),
-                "content": f.read()
+                "content": content
             }
             self._attachments.append(attachment)
             self._write()
