@@ -1,4 +1,5 @@
 from .yhat_json import json_dumps
+import sys
 
 _DEFAULT_BODY = """Your job has completed. This is the default message. You can
 customize this message by calling the `bandit.job.body(html or string)`
