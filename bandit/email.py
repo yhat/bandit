@@ -115,7 +115,7 @@ class Email(object):
                 return
             attachment = {
                 "filename": os.path.basename(filepath),
-                "contents": content
+                "content": content
             }
             self._attachments.append(attachment)
             self._write()
