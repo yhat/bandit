@@ -1,4 +1,6 @@
 from .yhat_json import json_dumps
+import mimetypes
+import base64
 import sys
 import os
 
@@ -98,7 +100,7 @@ class Email(object):
         self._body = html_or_string
         self._write()
 
-    def add_attachment(self, filepath):
+    def add_attachment(self, filepath, filetype=None):
         """
         Add an attachment to your email
 
@@ -107,6 +109,10 @@ class Email(object):
         filepath: str
             path to the file you'd like to attach
         """
+
+        if filetype is None:
+            filetype, _ = mimetypes.guess_type(filepath)
+
         with open(filepath, 'rb') as f:
             content = f.read()
             n_bytes = sys.getsizeof(content)
@@ -114,8 +120,9 @@ class Email(object):
                 sys.stderr.write("Attachment is too large! %s is %d bytes\n" % (filepath, n_bytes))
                 return
             attachment = {
+                "type": filetype,
                 "filename": os.path.basename(filepath),
-                "content": content
+                "content": base64.encodestring(content)
             }
             self._attachments.append(attachment)
             self._write()
