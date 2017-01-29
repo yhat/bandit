@@ -121,7 +121,7 @@ class Email(object):
                 return
             attachment = {
                 "type": filetype,
-                "filename": os.path.basename(filepath),
+                "name": os.path.basename(filepath),
                 "content": base64.encodestring(content)
             }
             self._attachments.append(attachment)
