@@ -23,6 +23,11 @@ class TestBasic(unittest.TestCase):
         email.send("hi@test.com")
         self.assertTrue(email._write()['recipients'], ['hi@test.com'])
     
+    def test_send_warning(self):
+        email = Email(write_json=False)
+        email.send("hi@test.com,foo@bar.com")
+        self.assertTrue(email._write()['recipients'], ['hi@test.com', 'foo@bar.com'])
+    
     def test_send_many(self):
         email = Email(write_json=False)
         email.send(["hi@test.com", "bye@test.com"])

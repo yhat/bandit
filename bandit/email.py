@@ -2,6 +2,7 @@ from .yhat_json import json_dumps
 import mimetypes
 import base64
 import warnings
+from exceptions import UserWarning
 import sys
 import os
 
@@ -138,8 +139,8 @@ class Email(object):
             str if one person, list if multiple
         """
         if isinstance(to, str):
-            warnings.warn("datatype", "the recipients you passed to the `send` method were formatted as a string. Bandit will split into individual emails using a comma. Please consider using a list instead!")
-            to = [to]
+            warnings.warn("the recipients you passed to the `send` method were formatted as a string. Bandit will split into individual emails using a comma. Please consider using a list instead!", UserWarning)
+            to = to.split(',')
         self._recipients = to
         self._write()
 
