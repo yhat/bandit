@@ -5,7 +5,7 @@ import sys
 import os
 
 _DEFAULT_BODY = """Your job has completed. This is the default message. You can
-customize this message by calling the `bandit.job.body(html or string)`
+customize this message by creating an email object: `from bandit import Email` and `email.body(html or string)`
 function and passing it stringified HTML or a plaintext string.""".replace("\n", " ")
 _DEFAULT_BODY += "\n\nCheers!\n~Team Bandit"
 
