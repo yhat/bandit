@@ -81,9 +81,26 @@ __Example:__
 ```python
 for x in range(10):
     for y in range(10):
-        for tag in ["a", "b", "c", "d", "e", "f", "g"]:
-            bandit.report(tag, np.random.rand())
+        bandit.report('Chart Line Name', float(np.random.rand()))
         time.sleep(0.1)
+```
+
+## Saving files
+
+Dealing with file paths on remote machines can be a bit confusing at times.
+
+From the Bandit client, use `output_dir` to easily save / read files:
+
+```python
+
+df = pd.DataFrame({
+  "A": [10,20,30,40,50],
+  "B": [20, 30, 10, 40, 50],
+  "C": [32, 234, 23, 23, 42523]
+})
+
+# save our data as a csv
+df.to_csv(output_dir + 'mydata.csv')
 ```
 
 ## Customizing Emails
@@ -91,10 +108,30 @@ for x in range(10):
 Send emails with a custom subject, body and attachments.
 
 ```python
-# specify the body of the email
-body = 'This is an email body'
+# import the email class
+email = Email()
 
-email = job.Email(["colin@yhathq.com"])
-email.subject("Email from Bandit")
+# For running scripts locally you can add write_json=False
+# email = Email(write_json=False)
+
+# specify the body of the email
+body = '''
+    Below is the result of the successful nightly model training script \n
+    \n
+    Model Stats: \n
+    - Model Formula: %s \n
+    - Adj. R2: %s \n
+''' % (str(result.model.formula), str(result.rsquared_adj))
+
 email.body(body)
+
+# set our subject line
+today = datetime.date.today().strftime('%Y_%m_%d')
+email.subject = '%s model results' % today
+
+# Add our attachments
+email.add_attachment(output_dir + 'datasample.csv')
+
+# Send our email to Colin and Ron
+email.send(['colin@yhathq.com', 'ron@channel4news.com'])
 ```
