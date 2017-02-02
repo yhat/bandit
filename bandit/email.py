@@ -59,6 +59,7 @@ class Email(object):
         joe.smith@test.com, bob.smith@test.com
         ======================================================================
         > Bandit Job
+        ======================================================================
         Your job has completed. This is the default message. You can customize
         this message by calling the `bandit.job.body(html or string)` function
         and passing it stringified HTML or a plaintext string.
@@ -72,9 +73,10 @@ class Email(object):
             ", ".join(self._recipients),
             "="*70,
             "> %s" % self._subject,
+            "="*70,
             self._body,
             "="*70,
-            "\n".join(["  - " + attachment['filename'] for attachment in self._attachments])
+            "\n".join(["  - " + attachment['name'] for attachment in self._attachments])
         ]
         return "\n".join(msg)
 

@@ -1,9 +1,10 @@
 from .job import Metadata
-from .yhat_json import json_dumps 
+from .yhat_json import json_dumps
 import requests
 import urlparse
 import json
 import time
+import tempfile
 import os
 
 
@@ -48,14 +49,15 @@ class Bandit(object):
         self.apikey = os.environ.get('BANDIT_CLIENT_APIKEY', apikey)
         self.url = os.environ.get('BANDIT_CLIENT_URL', url)
 
-        if self.username is None:
-            raise Exception("`username` cannot be None. Please set via `BANDIT_CLIENT_USERNAME` environment variable or via Bandit() constructor.")
-        if self.apikey is None:
-            raise Exception("`apikey` cannot be None. Please set via `BANDIT_CLIENT_APKEY` environment variable or via Bandit() constructor.")
-        if self.url is None:
-            raise Exception("`url` cannot be None. Please set via `BANDIT_CLIENT_URL` environment variable or via Bandit() constructor.")
+        if self.username is None or self.apikey is None or self.url is None:
+            self._is_local = True
 
         self.metadata = Metadata()
+
+        if self._is_local==True:
+            self.output_dir = tempfile.mkdtemp(prefix='tmp-bandit-')
+        else:
+            self.output_dir = '/job/output-files/'
 
     def run(self, project, jobname):
         """
@@ -74,39 +76,13 @@ class Bandit(object):
         >>> bandit.run("myproject", "my-first-job")
         OK
         """
+        if self._is_local==True:
+            print('/'.join([self.username, project, 'jobs', jobname]))
+            return
+
         url = urlparse.urljoin(self.url, '/'.join(['api', 'projects', self.username, project, 'jobs', jobname]))
         r = requests.get(url, auth=(self.username, self.apikey))
         return r.json()
-
-    def run_and_wait(self, project, jobname, timeout=60*5):
-        """
-        ...
-        """
-        run = self.run(project, jobname)
-        resultId = run['resultId']
-
-        start_time = time.time()
-
-        while (time.time() - timeout) <= start_time:
-            for result in self.get_job_results():
-                if result._id==resultId:
-                    if result.status in ['failed', 'success']:
-                        return result
-            time.sleep(2)
-
-        raise Exception("Job timed out")
-
-    def run_series(self, jobs, timeout=60*5):
-        """
-        ...
-        """
-        results = []
-        for job in jobs:
-            project = job['project']
-            name = job['name']
-            timeout = job.get('timeout', timeout)
-            results.append(self.run_and_wait(project, name, timeout=timeout))
-        return results
 
     def get_jobs(self):
         """
@@ -117,6 +93,10 @@ class Bandit(object):
         >>> bandit = Bandit("glamp", "6b3dff08-6ad8-4334-b37b-ad6162a0d4cf", "http://localhost:4567/")
         >>> bandit.get_jobs()
         """
+        if self._is_local==True:
+            print('/api/jobs')
+            return
+
         url = urlparse.urljoin(self.url, '/api/jobs')
         r = requests.get(url, params={'format': 'json'}, auth=(self.username, self.apikey))
         jobs = r.json()['jobs']
@@ -131,6 +111,10 @@ class Bandit(object):
         >>> bandit = Bandit("glamp", "6b3dff08-6ad8-4334-b37b-ad6162a0d4cf", "http://localhost:4567/")
         >>> bandit.get_job_results()
         """
+        if self._is_local==True:
+            print('/api/job-results')
+            return
+
         url = urlparse.urljoin(self.url, "/api/job-results")
         r = requests.get(url, params={'format': 'json'}, auth=(self.username, self.apikey))
         job_results = r.json()['jobResults']
@@ -161,7 +145,7 @@ class Bandit(object):
         # this is detecting whether or not this is being run on a bandit worker.
         # if we're not on a bandit worker, just do a "dry run"
         job_id = os.environ.get('BANDIT_JOB_ID')
-        if not job_id:
+        if not job_id or self._is_local==True:
             print(json_dumps(data))
             return { "status": "OK", "message": "DRY RUN" }
 
