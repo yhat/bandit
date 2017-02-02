@@ -49,6 +49,7 @@ class Bandit(object):
         self.apikey = os.environ.get('BANDIT_CLIENT_APIKEY', apikey)
         self.url = os.environ.get('BANDIT_CLIENT_URL', url)
 
+        self._is_local = False
         if self.username is None or self.apikey is None or self.url is None:
             self._is_local = True
 
