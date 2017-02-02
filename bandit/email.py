@@ -47,8 +47,9 @@ class Email(object):
             return self._to_dict()
 
         data = json_dumps(self._to_dict())
-        with open('/job/metadata/email.json', 'wb') as f:
-            f.write(data)
+        if os.path.exists('/job/metadata'):
+            with open('/job/metadata/email.json', 'wb') as f:
+                f.write(data)
 
     def __str__(self):
         """
@@ -130,7 +131,7 @@ class Email(object):
             }
             self._attachments.append(attachment)
             self._write()
-        
+
     def send(self, to):
         """
         Send an email to someone(s)
