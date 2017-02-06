@@ -157,3 +157,7 @@ class Bandit(object):
         url = urlparse.urljoin(self.url, '/'.join(['api', 'jobs', job_id, 'report']))
         r = requests.put(url, json=data, auth=(self.username, self.apikey))
         return r.json()
+    
+    def get_connection(self, name):
+        return os.environ.get('DATABASE_' + name)
+
