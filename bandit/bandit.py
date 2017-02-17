@@ -121,6 +121,26 @@ class Bandit(object):
         job_results = r.json()['jobResults']
         return [JobResult(**j) for j in job_results]
 
+    def stream(self, tag_name, y):
+        """
+        Parameters
+        ==========
+        tag_name: str
+            tag for the data point
+        x: int, float
+            x value for the data point
+        y: int, float
+            y value for the data point
+
+        Examples
+        ========
+        >>> bandit = Bandit("glamp", "6b3dff08-6ad8-4334-b37b-ad6162a0d4cf", "http://localhost:4567/")
+        >>> bandit.stream("thing", 10)
+        >>> bandit.stream("thing", 20)
+        >>> bandit.stream("thing", 30)
+        """
+        return self.report(tag_name, y)
+
     def report(self, tag_name, y):
         """
         Parameters
