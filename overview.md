@@ -9,14 +9,9 @@
 If you're running jobs on the Bandit server, you don't need to specify your
 `USERNAME`, `APIKEY` or the `BANDIT_URL`, as they are environment variables.
 
-However, for testing scripts locally, you'll need to include them:
-
-
 ```python
 # Read the environment variables in from the shell:
-bandit = Bandit(os.environ.get('BANDIT_CLIENT_USERNAME'), \
-                os.environ.get('BANDIT_CLIENT_APIKEY'), \
-                os.environ.get('BANDIT_CLIENT_URL'))
+bandit = Bandit()
 ```
 
 ## Tracking Data
@@ -66,11 +61,11 @@ bandit.metadata.R2 = result.rsquared
 bandit.metadata.AIC = result.aic
 ```
 
-## Reports
+## Stream Data
 
 Stream data from jobs back to the Bandit UI
 
-`bandit.report(tag_name, y)`
+`bandit.stream(tag_name, y)`
 
 __Parameters:__
 - `tag_name` _(str)_: the name of value to be tracked
@@ -81,7 +76,7 @@ __Example:__
 ```python
 for x in range(10):
     for y in range(10):
-        bandit.report('Chart Line Name', float(np.random.rand()))
+        bandit.stream('Chart Line Name', float(np.random.rand()))
         time.sleep(0.1)
 ```
 
@@ -100,7 +95,7 @@ df = pd.DataFrame({
 })
 
 # save our data as a csv
-df.to_csv(output_dir + 'mydata.csv')
+df.to_csv(bandit.output_dir + 'mydata.csv')
 ```
 
 ## Customizing Emails
@@ -130,7 +125,7 @@ today = datetime.date.today().strftime('%Y_%m_%d')
 email.subject = '%s model results' % today
 
 # Add our attachments
-email.add_attachment(output_dir + 'datasample.csv')
+email.add_attachment(bandit.output_dir + 'datasample.csv')
 
 # Send our email to Colin and Ron
 email.send(['colin@yhathq.com', 'ron@channel4news.com'])
