@@ -160,6 +160,9 @@ class Bandit(object):
         >>> bandit.report("thing", 30)
         """
 
+        if _is_numeric(y)==False:
+            raise Exception("`y` parameter is not a number '{}'".format(y))
+
         data = dict(tag_name=tag_name.replace(' ', '-'), x=0, y=y)
         data = json.loads(json_dumps(data))
 
@@ -181,3 +184,9 @@ class Bandit(object):
     def get_connection(self, name):
         return os.environ.get('DATABASE_' + name)
 
+def _is_numeric(x):
+    try:
+        float(x)
+        return True
+    except:
+        return False
