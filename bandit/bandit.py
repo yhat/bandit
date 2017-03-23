@@ -187,9 +187,42 @@ class Bandit(object):
         return r.json()
 
     def get_connection(self, name):
+        """
+        Get a database connection string that's saved on Bandit
+
+        Parameters
+        ==========
+        name: str
+            name of the database connection
+
+        Examples
+        ========
+        >>> bandit = Bandit()
+        >>> bandit.get_connection('postgres-dw')
+        # postgres://kermit:supersecretpass@productiondb.internal.hostname:5432/prod?ssl=true
+        """
         return os.environ.get('DATABASE_' + name)
 
     def make_dashboard(self, template_name="basic", **kwargs):
+        """
+        Construct an HTML dashboard from Python objects. You can use one of the pre-defined
+        templates (see dashboards/) or create your own!
+
+        Parameters
+        ==========
+        template_name: str
+            name of the template
+        kwargs:
+            variables you'd like to put into your template
+
+        Examples
+        ========
+        >>> from ggplot import mtcars
+        >>> bandit = Bandit()
+        >>> print bandit.make_dashboard(table=mtcars.to_html(classes="table"))
+        >>> print bandit.make_dashboard(table=mtcars)
+        >>> bandit.make_dashboard(template_name='many-tables', tables=[mtcars.head().to_html(classes='table'), mtcars.tail().to_html(classes='table')])
+        """
         variables = {}
         for key, value in kwargs.items():
             if isinstance(value, DataFrame):
