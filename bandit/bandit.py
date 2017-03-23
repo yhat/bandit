@@ -47,7 +47,7 @@ class Bandit(object):
     Examples
     ========
     >>> bandit = Bandit() # this will grab username, apikey, and url from environment variables
-    >>> bandit = Bandit("glamp", "6b3dff08-6ad8-4334-b37b-ad6162a0d4cf", "http://localhost:4567/")
+    >>> bandit = Bandit()
     """
     def __init__(self, username=None, apikey=None, url=None):
         self.username = os.environ.get('BANDIT_CLIENT_USERNAME', username)
@@ -78,7 +78,7 @@ class Bandit(object):
 
         Examples
         ========
-        >>> bandit = Bandit("glamp", "6b3dff08-6ad8-4334-b37b-ad6162a0d4cf", "http://localhost:4567/")
+        >>> bandit = Bandit()
         >>> bandit.run("myproject", "my-first-job")
         OK
         """
@@ -96,7 +96,7 @@ class Bandit(object):
 
         Examples
         ========
-        >>> bandit = Bandit("glamp", "6b3dff08-6ad8-4334-b37b-ad6162a0d4cf", "http://localhost:4567/")
+        >>> bandit = Bandit()
         >>> bandit.get_jobs()
         """
         if self._is_local==True:
@@ -114,7 +114,7 @@ class Bandit(object):
 
         Examples
         ========
-        >>> bandit = Bandit("glamp", "6b3dff08-6ad8-4334-b37b-ad6162a0d4cf", "http://localhost:4567/")
+        >>> bandit = Bandit()
         >>> bandit.get_job_results()
         """
         if self._is_local==True:
@@ -139,7 +139,7 @@ class Bandit(object):
 
         Examples
         ========
-        >>> bandit = Bandit("glamp", "6b3dff08-6ad8-4334-b37b-ad6162a0d4cf", "http://localhost:4567/")
+        >>> bandit = Bandit()
         >>> bandit.stream("thing", 10)
         >>> bandit.stream("thing", 20)
         >>> bandit.stream("thing", 30)
@@ -159,7 +159,7 @@ class Bandit(object):
 
         Examples
         ========
-        >>> bandit = Bandit("glamp", "6b3dff08-6ad8-4334-b37b-ad6162a0d4cf", "http://localhost:4567/")
+        >>> bandit = Bandit()
         >>> bandit.report("thing", 10)
         >>> bandit.report("thing", 20)
         >>> bandit.report("thing", 30)
@@ -204,6 +204,7 @@ class Bandit(object):
         return template(variables)
 
 def _to_unicode(s):
+    "python2/3 compatible unicoder"
     try:
         return unicode(s)
     except Exception as e:
