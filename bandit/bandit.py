@@ -1,11 +1,16 @@
 from .job import Metadata
 from .yhat_json import json_dumps
 import requests
+import pybars
 import urlparse
 import json
 import time
 import tempfile
 import os
+try:
+    from pandas import DataFrame
+except Exception as e:
+    DataFrame = None
 
 
 class Job(object):
@@ -180,9 +185,29 @@ class Bandit(object):
         url = urlparse.urljoin(self.url, '/'.join(['api', 'jobs', job_id, 'report']))
         r = requests.put(url, json=data, auth=(self.username, self.apikey))
         return r.json()
-    
+
     def get_connection(self, name):
         return os.environ.get('DATABASE_' + name)
+
+    def make_dashboard(self, template_name="basic", **kwargs):
+        variables = {}
+        for key, value in kwargs.items():
+            if isinstance(value, DataFrame):
+                value = value.to_html(classes='table')
+            variables[key] = value
+
+        compiler = pybars.Compiler()
+        this_dir = os.path.dirname(os.path.realpath(__file__))
+        basic_template_file = os.path.join(this_dir, 'dashboards', template_name + '.html')
+        basic_template = open(basic_template_file, 'rb').read()
+        template = compiler.compile(_to_unicode(basic_template))
+        return template(variables)
+
+def _to_unicode(s):
+    try:
+        return unicode(s)
+    except Exception as e:
+        return str(text, 'utf-8')
 
 def _is_numeric(x):
     try:
