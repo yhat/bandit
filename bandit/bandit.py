@@ -203,7 +203,7 @@ class Bandit(object):
         """
         return os.environ.get('DATABASE_' + name)
 
-    def make_dashboard(self, template_name="raw-html", **kwargs):
+    def make_dashboard(self, name, template_name="raw-html", **kwargs):
         """
         Construct an HTML dashboard from Python objects. You can use one of the pre-defined
         templates (see dashboards/) or create your own!
@@ -242,7 +242,14 @@ class Bandit(object):
         template_string = open(template_file, 'rb').read()
         template_string = _to_unicode(template_string)
         template = compiler.compile(template_string)
-        return template(variables)
+        html = template(variables)
+
+        if not job_id or self._is_local==True:
+            print(html)
+            return
+
+        with open(self.output_dir + name, 'wb') as f:
+            f.write(html)
 
 def _to_unicode(s):
     "python2/3 compatible unicoder"
