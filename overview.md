@@ -10,7 +10,7 @@ If you're running jobs on the Bandit server, you don't need to specify your
 `USERNAME`, `APIKEY` or the `BANDIT_URL`, as they are environment variables.
 
 ```python
-# Read the environment variables in from the shell:
+# Create an instance of the Bandit class:
 bandit = Bandit()
 ```
 

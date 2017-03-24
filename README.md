@@ -9,5 +9,5 @@ $ pip install -U bandit-cli
 [Documentation](./overview)
 
 - [Metadata](./overview#metadata)
-- [Reports](./overview#reports)
+- [Stream Data](./overview#stream-data)
 - [Customizing Emails](./overview#customizing-emails)
