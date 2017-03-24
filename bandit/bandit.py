@@ -203,7 +203,7 @@ class Bandit(object):
         """
         return os.environ.get('DATABASE_' + name)
 
-    def make_dashboard(self, template_name="basic", **kwargs):
+    def make_dashboard(self, template_name="raw-html", **kwargs):
         """
         Construct an HTML dashboard from Python objects. You can use one of the pre-defined
         templates (see dashboards/) or create your own!
@@ -226,14 +226,22 @@ class Bandit(object):
         variables = {}
         for key, value in kwargs.items():
             if isinstance(value, DataFrame):
-                value = value.to_html(classes='table')
+                value = value.to_html(classes='table table-bordered')
             variables[key] = value
 
         compiler = pybars.Compiler()
-        this_dir = os.path.dirname(os.path.realpath(__file__))
-        basic_template_file = os.path.join(this_dir, 'dashboards', template_name + '.html')
-        basic_template = open(basic_template_file, 'rb').read()
-        template = compiler.compile(_to_unicode(basic_template))
+
+        if os.path.exists(template_name):
+            template_file = template_name
+        else:
+            this_dir = os.path.dirname(os.path.realpath(__file__))
+            template_file = os.path.join(this_dir, 'dashboards', template_name + '.html')
+            if not os.path.exists(template_file):
+                raise Exception("Could not file template file: " + template_file)
+
+        template_string = open(template_file, 'rb').read()
+        template_string = _to_unicode(template_string)
+        template = compiler.compile(template_string)
         return template(variables)
 
 def _to_unicode(s):

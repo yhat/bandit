@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://bootswatch.com/readable/bootstrap.min.css" />
+    <title>Bandit</title>
+  </head>
+  <body>
+    <div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a href="../" class="navbar-brand">Dashboard</a>
+          <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      {{#images}}
+        <img src="{{.}}" />
+        <hr />
+      {{/images}}
+      <hr />
+      {{#tables}}
+        {{{ . }}}
+        <hr />
+      {{/tables}}
+    </div>
+  </body>
+</html>
