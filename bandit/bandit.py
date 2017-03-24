@@ -203,7 +203,7 @@ class Bandit(object):
         """
         return os.environ.get('DATABASE_' + name)
 
-    def make_dashboard(self, name, template_name="raw-html", **kwargs):
+    def make_dashboard(self, name, template_file="raw-html.html", **kwargs):
         """
         Construct an HTML dashboard from Python objects. You can use one of the pre-defined
         templates (see dashboards/) or create your own!
@@ -221,7 +221,7 @@ class Bandit(object):
         >>> bandit = Bandit()
         >>> print bandit.make_dashboard("my dashboard", table=mtcars.to_html(classes="table"))
         >>> print bandit.make_dashboard("my dashboard", table=mtcars)
-        >>> bandit.make_dashboard("my dashboard", template_name='many-tables', tables=[mtcars.head().to_html(classes='table'), mtcars.tail().to_html(classes='table')])
+        >>> bandit.make_dashboard("my dashboard", template_file='raw-html.html', tables=[mtcars.head().to_html(classes='table'), mtcars.tail().to_html(classes='table')])
         """
         variables = {}
         for key, value in kwargs.items():
@@ -231,11 +231,9 @@ class Bandit(object):
 
         compiler = pybars.Compiler()
 
-        if os.path.exists(template_name):
-            template_file = template_name
-        else:
+        if not os.path.exists(template_file):
             this_dir = os.path.dirname(os.path.realpath(__file__))
-            template_file = os.path.join(this_dir, 'dashboards', template_name + '.html')
+            template_file = os.path.join(this_dir, 'dashboards', template_file)
             if not os.path.exists(template_file):
                 raise Exception("Could not file template file: " + template_file)
 
