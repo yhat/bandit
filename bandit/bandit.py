@@ -244,7 +244,7 @@ class Bandit(object):
         template = compiler.compile(template_string)
         html = template(variables)
 
-        if not job_id or self._is_local==True:
+        if self._is_local==True:
             print(html)
             return
 

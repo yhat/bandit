@@ -13,6 +13,7 @@ bandit = Bandit()
 #     )
 
 print(bandit.make_dashboard(
+    "my dash",
     template_name='/Users/glamp/workspace/github.com/yhat/bandit/bandit-client/tests/custom-dash.html',
     images=['/tmp/plot.png', '/tmp/plot.png', '/tmp/plot.png', '/tmp/plot.png'],
     tables=[mtcars.head().to_html(classes='table'), mtcars.tail().to_html(classes='table table-striped')])
