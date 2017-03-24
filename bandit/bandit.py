@@ -210,8 +210,8 @@ class Bandit(object):
 
         Parameters
         ==========
-        template_name: str
-            name of the template
+        template_file: str
+            path to the template you'd like to use 
         kwargs:
             variables you'd like to put into your template
 
