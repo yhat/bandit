@@ -1,11 +1,16 @@
 from .job import Metadata
 from .yhat_json import json_dumps
 import requests
+import pybars
 import urlparse
 import json
 import time
 import tempfile
 import os
+try:
+    from pandas import DataFrame
+except Exception as e:
+    DataFrame = None
 
 
 class Job(object):
@@ -42,7 +47,7 @@ class Bandit(object):
     Examples
     ========
     >>> bandit = Bandit() # this will grab username, apikey, and url from environment variables
-    >>> bandit = Bandit("glamp", "6b3dff08-6ad8-4334-b37b-ad6162a0d4cf", "http://localhost:4567/")
+    >>> bandit = Bandit()
     """
     def __init__(self, username=None, apikey=None, url=None):
         self.username = os.environ.get('BANDIT_CLIENT_USERNAME', username)
@@ -73,7 +78,7 @@ class Bandit(object):
 
         Examples
         ========
-        >>> bandit = Bandit("glamp", "6b3dff08-6ad8-4334-b37b-ad6162a0d4cf", "http://localhost:4567/")
+        >>> bandit = Bandit()
         >>> bandit.run("myproject", "my-first-job")
         OK
         """
@@ -91,7 +96,7 @@ class Bandit(object):
 
         Examples
         ========
-        >>> bandit = Bandit("glamp", "6b3dff08-6ad8-4334-b37b-ad6162a0d4cf", "http://localhost:4567/")
+        >>> bandit = Bandit()
         >>> bandit.get_jobs()
         """
         if self._is_local==True:
@@ -109,7 +114,7 @@ class Bandit(object):
 
         Examples
         ========
-        >>> bandit = Bandit("glamp", "6b3dff08-6ad8-4334-b37b-ad6162a0d4cf", "http://localhost:4567/")
+        >>> bandit = Bandit()
         >>> bandit.get_job_results()
         """
         if self._is_local==True:
@@ -120,6 +125,26 @@ class Bandit(object):
         r = requests.get(url, params={'format': 'json'}, auth=(self.username, self.apikey))
         job_results = r.json()['jobResults']
         return [JobResult(**j) for j in job_results]
+
+    def stream(self, tag_name, y):
+        """
+        Parameters
+        ==========
+        tag_name: str
+            tag for the data point
+        x: int, float
+            x value for the data point
+        y: int, float
+            y value for the data point
+
+        Examples
+        ========
+        >>> bandit = Bandit()
+        >>> bandit.stream("thing", 10)
+        >>> bandit.stream("thing", 20)
+        >>> bandit.stream("thing", 30)
+        """
+        return self.report(tag_name, y)
 
     def report(self, tag_name, y):
         """
@@ -134,11 +159,14 @@ class Bandit(object):
 
         Examples
         ========
-        >>> bandit = Bandit("glamp", "6b3dff08-6ad8-4334-b37b-ad6162a0d4cf", "http://localhost:4567/")
+        >>> bandit = Bandit()
         >>> bandit.report("thing", 10)
         >>> bandit.report("thing", 20)
         >>> bandit.report("thing", 30)
         """
+
+        if _is_numeric(y)==False:
+            raise Exception("`y` parameter is not a number '{}'".format(y))
 
         data = dict(tag_name=tag_name.replace(' ', '-'), x=0, y=y)
         data = json.loads(json_dumps(data))
@@ -157,3 +185,82 @@ class Bandit(object):
         url = urlparse.urljoin(self.url, '/'.join(['api', 'jobs', job_id, 'report']))
         r = requests.put(url, json=data, auth=(self.username, self.apikey))
         return r.json()
+
+    def get_connection(self, name):
+        """
+        Get a database connection string that's saved on Bandit
+
+        Parameters
+        ==========
+        name: str
+            name of the database connection
+
+        Examples
+        ========
+        >>> bandit = Bandit()
+        >>> bandit.get_connection('postgres-dw')
+        # postgres://kermit:supersecretpass@productiondb.internal.hostname:5432/prod?ssl=true
+        """
+        return os.environ.get('DATABASE_' + name)
+
+    def make_dashboard(self, name, template_name="raw-html", **kwargs):
+        """
+        Construct an HTML dashboard from Python objects. You can use one of the pre-defined
+        templates (see dashboards/) or create your own!
+
+        Parameters
+        ==========
+        template_name: str
+            name of the template
+        kwargs:
+            variables you'd like to put into your template
+
+        Examples
+        ========
+        >>> from ggplot import mtcars
+        >>> bandit = Bandit()
+        >>> print bandit.make_dashboard("my dashboard", table=mtcars.to_html(classes="table"))
+        >>> print bandit.make_dashboard("my dashboard", table=mtcars)
+        >>> bandit.make_dashboard("my dashboard", template_name='many-tables', tables=[mtcars.head().to_html(classes='table'), mtcars.tail().to_html(classes='table')])
+        """
+        variables = {}
+        for key, value in kwargs.items():
+            if isinstance(value, DataFrame):
+                value = value.to_html(classes='table table-bordered')
+            variables[key] = value
+
+        compiler = pybars.Compiler()
+
+        if os.path.exists(template_name):
+            template_file = template_name
+        else:
+            this_dir = os.path.dirname(os.path.realpath(__file__))
+            template_file = os.path.join(this_dir, 'dashboards', template_name + '.html')
+            if not os.path.exists(template_file):
+                raise Exception("Could not file template file: " + template_file)
+
+        template_string = open(template_file, 'rb').read()
+        template_string = _to_unicode(template_string)
+        template = compiler.compile(template_string)
+        html = template(variables)
+
+        if self._is_local==True:
+            print(html)
+            return
+
+        with open(self.output_dir + name, 'wb') as f:
+            f.write(html)
+
+def _to_unicode(s):
+    "python2/3 compatible unicoder"
+    try:
+        return unicode(s)
+    except Exception as e:
+        return str(text, 'utf-8')
+
+def _is_numeric(x):
+    try:
+        float(x)
+        return True
+    except:
+        return False
