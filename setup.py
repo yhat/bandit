@@ -31,7 +31,7 @@ setup(
     classifiers=(
     ),
     install_requires=[
-        "pybars==0.9.3",
+        "pybars3==0.9.3",
         "requests==2.11.1"
     ],
     keywords=['yhat', 'bandit'],
