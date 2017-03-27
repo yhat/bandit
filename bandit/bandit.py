@@ -231,6 +231,8 @@ class Bandit(object):
 
         compiler = pybars.Compiler()
 
+    
+        template_file = os.path.abspath(template_file)
         if not os.path.exists(template_file):
             this_dir = os.path.dirname(os.path.realpath(__file__))
             template_file = os.path.join(this_dir, 'dashboards', template_file)

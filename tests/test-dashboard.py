@@ -1,5 +1,6 @@
 from bandit import Bandit
 from ggplot import *
+import os
 
 p = ggplot(diamonds, aes(x='price')) + geom_density()
 p.save('/tmp/plot.png')
@@ -12,9 +13,12 @@ bandit = Bandit()
 #     tables=[mtcars.head().to_html(classes='table'), mtcars.tail().to_html(classes='table table-striped')])
 #     )
 
+
+this_dir = os.path.dirname(os.path.realpath(__file__))
+filename = './custom-dash.html'
 print(bandit.make_dashboard(
     "my dash",
-    template_name='/Users/glamp/workspace/github.com/yhat/bandit/bandit-client/tests/custom-dash.html',
+    template_file=os.path.join(this_dir, filename),
     images=['/tmp/plot.png', '/tmp/plot.png', '/tmp/plot.png', '/tmp/plot.png'],
     tables=[mtcars.head().to_html(classes='table'), mtcars.tail().to_html(classes='table table-striped')])
     )
