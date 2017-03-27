@@ -242,6 +242,9 @@ class Bandit(object):
         template = compiler.compile(template_string)
         html = template(variables)
 
+        if isinstance(html, pybars._compiler.strlist):
+            html = "".join(html)
+
         if self._is_local==True:
             print(html)
             return

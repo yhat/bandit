@@ -21,6 +21,11 @@ setup(
     author_email="greg@yhathq.com",
     url="https://github.com/yhat/yhat-client",
     packages=find_packages(),
+    package_data={
+        "bandit": [
+            "dashboards/*.html",
+        ]
+    },
     description="Bandit client for Yhat (http://yhat.com/)",
     license="BSD",
     classifiers=(
