@@ -251,6 +251,9 @@ class Bandit(object):
             print(html)
             return
 
+        if not name.endswith('.html'):
+            name += '.html'
+
         with open(self.output_dir + name, 'wb') as f:
             f.write(html)
 
