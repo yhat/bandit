@@ -187,6 +187,28 @@ class Bandit(object):
         return r.json()
 
     def get_file(self, username, project, job, filename, n='latest'):
+        """
+        Fetch a file outputted by a job. This will return a string representation of the file.
+        
+        Parameters
+        ==========
+        username: str
+            owner of the job
+        project: str
+            name of the project
+        job: str
+            name of the job
+        filename: str
+            name of the file
+        n: str, int
+            job # you'd like to retrieve the file for. defaults to latest.
+
+        Examples
+        ========
+        >>> bandit = Bandit()
+        >>> bandit.get_file('glamp', 'bandit-demos', 'deploy-to-ops', 'README.md')
+        >>> bandit.get_file('glamp', 'bandit-demos', 'deploy-to-ops', 'classifier.pkl')
+        """
         path = os.path.join('/api', 'projects', username, project, 'jobs', job, n, 'output-files', filename)
         url = urlparse.urljoin(self.url, path)
         r = requests.get(url, auth=(self.username, self.apikey))
