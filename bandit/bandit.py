@@ -186,6 +186,12 @@ class Bandit(object):
         r = requests.put(url, json=data, auth=(self.username, self.apikey))
         return r.json()
 
+    def get_file(self, username, project, job, filename, n='latest'):
+        path = os.path.join('/api', 'projects', username, project, 'jobs', job, n, 'output-files', filename)
+        url = urlparse.urljoin(self.url, path)
+        r = requests.get(url, auth=(self.username, self.apikey))
+        return r
+
     def get_connection(self, name):
         """
         Get a database connection string that's saved on Bandit
