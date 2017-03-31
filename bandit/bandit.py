@@ -212,7 +212,7 @@ class Bandit(object):
         path = os.path.join('/api', 'projects', username, project, 'jobs', job, n, 'output-files', filename)
         url = urlparse.urljoin(self.url, path)
         r = requests.get(url, auth=(self.username, self.apikey))
-        return r
+        return r.text
 
     def get_connection(self, name):
         """
