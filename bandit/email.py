@@ -2,7 +2,10 @@ from .yhat_json import json_dumps
 import mimetypes
 import base64
 import warnings
-from exceptions import UserWarning
+try:
+    from exceptions import UserWarning
+except:
+    pass
 import sys
 import os
 
@@ -48,7 +51,7 @@ class Email(object):
 
         data = json_dumps(self._to_dict())
         if os.path.exists('/job/metadata'):
-            with open('/job/metadata/email.json', 'wb') as f:
+            with open('/job/metadata/email.json', 'w') as f:
                 f.write(data)
 
     def __str__(self):

@@ -2,7 +2,12 @@ from .job import Metadata
 from .yhat_json import json_dumps
 import requests
 import pybars
-import urlparse
+try:
+    # python2
+    import urlparse
+except:
+    # python3
+    from urllib.parse import urlparse
 import json
 import time
 import tempfile
@@ -179,7 +184,7 @@ class Bandit(object):
             return { "status": "OK", "message": "DRY RUN" }
 
         # write/append to the charts.ndjson file that will be inside the container
-        with open('/job/metadata/charts.ndjson', 'ab') as f:
+        with open('/job/metadata/charts.ndjson', 'a') as f:
             f.write(json_dumps(data) + '\n')
 
         url = urlparse.urljoin(self.url, '/'.join(['api', 'jobs', job_id, 'report']))
@@ -267,7 +272,7 @@ class Bandit(object):
             if not os.path.exists(template_file):
                 raise Exception("Could not file template file: " + template_file)
 
-        template_string = open(template_file, 'rb').read()
+        template_string = open(template_file, 'r').read()
         template_string = _to_unicode(template_string)
         template = compiler.compile(template_string)
         html = template(variables)
@@ -282,7 +287,7 @@ class Bandit(object):
         if not name.endswith('.html'):
             name += '.html'
 
-        with open(self.output_dir + name, 'wb') as f:
+        with open(self.output_dir + name, 'w') as f:
             f.write(html)
 
 def _to_unicode(s):

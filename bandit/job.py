@@ -62,42 +62,13 @@ class Metadata(Map):
             sys.stderr.write(json.dumps(data, indent=2) + '\n')
             return
 
-        with open('/job/metadata/metadata.json', 'wb') as f:
+        with open('/job/metadata/metadata.json', 'w') as f:
             json.dump(data, f)
 
     def _get_metadata(self):
         if not os.path.exists('/job/metadata/metadata.json'):
             return {}
 
-        with open('/job/metadata/metadata.json', 'rb') as f:
+        with open('/job/metadata/metadata.json', 'r') as f:
             return json.load(f)
-
-
-# def metadata(json_blob):
-#     _write_metadata(json_blob)
-#
-# def add_metadata_key(key, value):
-#     """
-#     Add key value pair to your metdata.
-#
-#     Parameters
-#     ==========
-#     key: str
-#         name of the value you'd like to save
-#     value: object
-#         value of what you'd like to save
-#
-#     Examples
-#     ========
-#     >>> add_metadata_key("r2", 0.82)
-#     >>> add_metadata_key("foo", "bar")
-#     """
-#     metadata = _get_metadata()
-#     metadata[key] = value
-#     _write_metadata(json.dumps(metadata))
-#
-# def set_status(status):
-#     if status not in ['failed', 'success']:
-#         raise Exception("Invalid status: %" % status)
-#     os.environ['BANDIT_JOB_STATUS'] = status
 
